@@ -53,6 +53,7 @@
     <style>
       .text-gradient {
         background: linear-gradient(to right, #6366f1, #8b5cf6);
+        background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -470,9 +471,16 @@
 
       // --- Logout Logic ---
       const logoutBtn = document.getElementById('logout-btn');
-      logoutBtn.addEventListener('click', () => {
+      logoutBtn.addEventListener('click', async () => {
+        // Attempt server-side logout to destroy session cookie
+        try {
+          await fetch('/api/logout', { method: 'POST' });
+        } catch (e) {
+          // ignore network errors
+        }
+        // Clear client-side state and navigate to login
         localStorage.removeItem('schoolManagerUser');
-        window.location.href = 'index.html'; // Redirect to login page
+        window.location.href = '/login.html'; // Redirect to login page
       });
 
       // --- Toast Notification System ---
