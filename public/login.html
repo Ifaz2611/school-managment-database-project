@@ -11,9 +11,44 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="tailwind-config.js"></script>
-    <link rel="stylesheet" href="styles.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                500: '#6366f1',
+                600: '#4f46e5',
+              },
+            },
+            animation: {
+              float: 'float 6s ease-in-out infinite',
+              'float-delay': 'float 6s ease-in-out infinite 3s',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .shadow-glow {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
   </head>
+
   <body
     class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased"
   >
@@ -192,11 +227,11 @@
                   type="email"
                   autocomplete="email"
                   required
-                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:z-10 sm:text-sm"
+                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm"
                   placeholder="Email address"
                 />
               </div>
-              <div>
+              <div class="relative">
                 <label for="login-password" class="sr-only">Password</label>
                 <input
                   id="login-password"
@@ -204,9 +239,22 @@
                   type="password"
                   autocomplete="current-password"
                   required
-                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:z-10 sm:text-sm"
+                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm"
                   placeholder="Password"
                 />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onclick="togglePasswordVisibility('login-password', this)"
+                >
+                  <svg id="eye-icon-login" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg id="eye-off-icon-login" class="w-5 h-5 text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                </button>
               </div>
 
               <div
@@ -217,9 +265,16 @@
               <div>
                 <button
                   type="submit"
+                  id="login-submit"
                   class="group relative w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 focus:outline-none focus:ring-4 focus:ring-brand-500/30 transition-all duration-200 shadow-md shadow-brand-500/20"
                 >
-                  Sign In
+                  <span id="login-submit-text">Sign In</span>
+                  <span id="login-spinner" class="hidden">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -237,7 +292,7 @@
                   type="text"
                   autocomplete="username"
                   required
-                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:z-10 sm:text-sm"
+                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm"
                   placeholder="Username"
                 />
               </div>
@@ -249,11 +304,11 @@
                   type="email"
                   autocomplete="email"
                   required
-                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:z-10 sm:text-sm"
+                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm"
                   placeholder="Email address"
                 />
               </div>
-              <div>
+              <div class="relative">
                 <label for="reg-password" class="sr-only">Password</label>
                 <input
                   id="reg-password"
@@ -261,9 +316,22 @@
                   type="password"
                   autocomplete="new-password"
                   required
-                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:z-10 sm:text-sm"
+                  class="form-input appearance-none rounded-xl relative block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm"
                   placeholder="Password (min 6 characters)"
                 />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onclick="togglePasswordVisibility('reg-password', this)"
+                >
+                  <svg id="eye-icon-reg" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg id="eye-off-icon-reg" class="w-5 h-5 text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                </button>
               </div>
 
               <div
@@ -274,9 +342,16 @@
               <div>
                 <button
                   type="submit"
+                  id="register-submit"
                   class="group relative w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 focus:outline-none focus:ring-4 focus:ring-brand-500/30 transition-all duration-200 shadow-md shadow-brand-500/20"
                 >
-                  Create Account
+                  <span id="register-submit-text">Create Account</span>
+                  <span id="register-spinner" class="hidden">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
@@ -292,7 +367,167 @@
       </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script src="theme.js"></script>
+    <script>
+      // Theme toggle logic
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        themeToggleLightIcon.classList.remove('hidden');
+        document.documentElement.classList.add('dark');
+      } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        document.documentElement.classList.remove('dark');
+      }
+
+      themeToggle.addEventListener('click', () => {
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+
+        if (localStorage.getItem('color-theme')) {
+          if (localStorage.getItem('color-theme') === 'light') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+          }
+        } else {
+          if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+          } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+          }
+        }
+      });
+
+      // Tab switching logic
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+
+      tabLogin.addEventListener('click', () => {
+        tabLogin.classList.add('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/30');
+        tabLogin.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
+        tabRegister.classList.remove('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/30');
+        tabRegister.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+      });
+
+      tabRegister.addEventListener('click', () => {
+        tabRegister.classList.add('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/30');
+        tabRegister.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
+        tabLogin.classList.remove('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/30');
+        tabLogin.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      });
+
+      // Password visibility toggle
+      function togglePasswordVisibility(inputId, button) {
+        const input = document.getElementById(inputId);
+        const eyeIcon = button.querySelector('svg:not(.hidden)');
+        const eyeOffIcon = button.querySelector('svg.hidden');
+
+        if (input.type === 'password') {
+          input.type = 'text';
+          eyeIcon.classList.add('hidden');
+          eyeOffIcon.classList.remove('hidden');
+        } else {
+          input.type = 'password';
+          eyeIcon.classList.remove('hidden');
+          eyeOffIcon.classList.add('hidden');
+        }
+      }
+
+      // Form validation and submission
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorElement = document.getElementById('login-error');
+        const submitButton = document.getElementById('login-submit');
+        const submitText = document.getElementById('login-submit-text');
+        const spinner = document.getElementById('login-spinner');
+
+        // Basic validation
+        if (!email.includes('@')) {
+          errorElement.textContent = 'Please enter a valid email address.';
+          errorElement.classList.remove('hidden');
+          return;
+        }
+
+        if (password.length < 6) {
+          errorElement.textContent = 'Password must be at least 6 characters.';
+          errorElement.classList.remove('hidden');
+          return;
+        }
+
+        // Simulate loading state
+        submitButton.disabled = true;
+        submitText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Reset form
+        submitButton.disabled = false;
+        submitText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        errorElement.classList.add('hidden');
+        alert('Login successful (simulated)!');
+      });
+
+      document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('reg-username').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+        const errorElement = document.getElementById('register-error');
+        const submitButton = document.getElementById('register-submit');
+        const submitText = document.getElementById('register-submit-text');
+        const spinner = document.getElementById('register-spinner');
+
+        // Basic validation
+        if (username.length < 3) {
+          errorElement.textContent = 'Username must be at least 3 characters.';
+          errorElement.classList.remove('hidden');
+          return;
+        }
+
+        if (!email.includes('@')) {
+          errorElement.textContent = 'Please enter a valid email address.';
+          errorElement.classList.remove('hidden');
+          return;
+        }
+
+        if (password.length < 6) {
+          errorElement.textContent = 'Password must be at least 6 characters.';
+          errorElement.classList.remove('hidden');
+          return;
+        }
+
+        // Simulate loading state
+        submitButton.disabled = true;
+        submitText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Reset form
+        submitButton.disabled = false;
+        submitText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        errorElement.classList.add('hidden');
+        alert('Registration successful (simulated)!');
+      });
+    </script>
   </body>
 </html>
