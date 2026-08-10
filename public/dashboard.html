@@ -13,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
@@ -114,37 +115,6 @@
               class="text-sm font-medium text-gray-600 dark:text-gray-300"
             ></span>
           </div>
-          <button
-            id="theme-toggle"
-            type="button"
-            aria-label="Toggle theme"
-            class="text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-brand-500/30 rounded-xl text-sm p-2.5 transition"
-          >
-            <svg
-              id="theme-toggle-dark-icon"
-              class="hidden w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-              ></path>
-            </svg>
-            <svg
-              id="theme-toggle-light-icon"
-              class="hidden w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4.95 16.05l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zm-2.121-3.536a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1z"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-          </button>
           <button
             id="logout-btn"
             class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 rounded-xl shadow-md shadow-brand-500/20 transition-all duration-200"
@@ -483,43 +453,6 @@
     </div>
 
     <script>
-      // --- Theme Toggle Logic ---
-      const themeToggle = document.getElementById('theme-toggle');
-      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-
-      // Check for saved theme preference or use system preference
-      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        themeToggleLightIcon.classList.remove('hidden');
-        document.documentElement.classList.add('dark');
-      } else {
-        themeToggleDarkIcon.classList.remove('hidden');
-        document.documentElement.classList.remove('dark');
-      }
-
-      themeToggle.addEventListener('click', () => {
-        themeToggleDarkIcon.classList.toggle('hidden');
-        themeToggleLightIcon.classList.toggle('hidden');
-
-        if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-          }
-        } else {
-          if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-          } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          }
-        }
-      });
-
       // --- User Display Logic ---
       // Simulate user data (replace with actual user data from backend)
       const userDisplay = document.getElementById('user-display');

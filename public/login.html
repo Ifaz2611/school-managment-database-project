@@ -13,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
@@ -52,39 +53,6 @@
   <body
     class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased"
   >
-    <!-- Theme toggle -->
-    <button
-      id="theme-toggle"
-      type="button"
-      aria-label="Toggle theme"
-      class="fixed top-4 right-4 z-50 text-gray-500 dark:text-gray-400 bg-white/70 dark:bg-gray-800/70 backdrop-blur border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/30 rounded-xl text-sm p-2.5 shadow-sm transition"
-    >
-      <svg
-        id="theme-toggle-dark-icon"
-        class="hidden w-5 h-5"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-        ></path>
-      </svg>
-      <svg
-        id="theme-toggle-light-icon"
-        class="hidden w-5 h-5"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4.95 16.05l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zm-2.121-3.536a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1z"
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
-    </button>
-
     <div class="flex min-h-screen relative overflow-hidden">
       <!-- Decorative blurred shapes -->
       <div class="pointer-events-none fixed inset-0 overflow-hidden">
@@ -368,42 +336,6 @@
     </div>
 
     <script>
-      // Theme toggle logic
-      const themeToggle = document.getElementById('theme-toggle');
-      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-
-      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        themeToggleLightIcon.classList.remove('hidden');
-        document.documentElement.classList.add('dark');
-      } else {
-        themeToggleDarkIcon.classList.remove('hidden');
-        document.documentElement.classList.remove('dark');
-      }
-
-      themeToggle.addEventListener('click', () => {
-        themeToggleDarkIcon.classList.toggle('hidden');
-        themeToggleLightIcon.classList.toggle('hidden');
-
-        if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-          }
-        } else {
-          if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-          } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          }
-        }
-      });
-
       // Tab switching logic
       const tabLogin = document.getElementById('tab-login');
       const tabRegister = document.getElementById('tab-register');
@@ -468,20 +400,33 @@
           return;
         }
 
-        // Simulate loading state
+        // Loading state
         submitButton.disabled = true;
         submitText.classList.add('hidden');
         spinner.classList.remove('hidden');
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Reset form
-        submitButton.disabled = false;
-        submitText.classList.remove('hidden');
-        spinner.classList.add('hidden');
         errorElement.classList.add('hidden');
-        alert('Login successful (simulated)!');
+
+        try {
+          const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            errorElement.textContent = data.errors ? data.errors.join(' ') : 'Login failed.';
+            errorElement.classList.remove('hidden');
+            return;
+          }
+          window.location.href = '/dashboard.html';
+        } catch {
+          errorElement.textContent = 'Network error. Please try again.';
+          errorElement.classList.remove('hidden');
+        } finally {
+          submitButton.disabled = false;
+          submitText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+        }
       });
 
       document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -513,20 +458,33 @@
           return;
         }
 
-        // Simulate loading state
+        // Loading state
         submitButton.disabled = true;
         submitText.classList.add('hidden');
         spinner.classList.remove('hidden');
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Reset form
-        submitButton.disabled = false;
-        submitText.classList.remove('hidden');
-        spinner.classList.add('hidden');
         errorElement.classList.add('hidden');
-        alert('Registration successful (simulated)!');
+
+        try {
+          const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            errorElement.textContent = data.errors ? data.errors.join(' ') : 'Registration failed.';
+            errorElement.classList.remove('hidden');
+            return;
+          }
+          window.location.href = '/dashboard.html';
+        } catch {
+          errorElement.textContent = 'Network error. Please try again.';
+          errorElement.classList.remove('hidden');
+        } finally {
+          submitButton.disabled = false;
+          submitText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+        }
       });
     </script>
   </body>
