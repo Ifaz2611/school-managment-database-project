@@ -11,13 +11,78 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="tailwind-config.js"></script>
-    <link rel="stylesheet" href="styles.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#eef2ff',
+                100: '#e0e7ff',
+                500: '#6366f1',
+                600: '#4f46e5',
+                700: '#4338ca',
+                900: '#1e1b4b',
+              },
+            },
+            animation: {
+              'spin-slow': 'spin 2s linear infinite',
+              'fade-in': 'fadeIn 0.3s ease-in-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+              'slide-down': 'slideDown 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(10px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              slideDown: {
+                '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .text-gradient {
+        background: linear-gradient(to right, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .shadow-soft {
+        box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+      }
+      .shadow-glow {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      }
+      .modal-overlay {
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-in {
+        animation: slideUp 0.3s ease-out;
+      }
+      .toast {
+        animation: slideDown 0.3s ease-out;
+      }
+    </style>
   </head>
+
   <body
     class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen"
   >
-    <div id="toast-container"></div>
+    <!-- Toast container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 w-80"></div>
 
     <!-- Header -->
     <header
@@ -177,7 +242,7 @@
                 type="text"
                 id="name"
                 required
-                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none sm:text-sm"
+                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 sm:text-sm"
                 placeholder="e.g. Alice Johnson"
               />
             </div>
@@ -191,7 +256,7 @@
                 type="text"
                 id="roll"
                 required
-                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none sm:text-sm"
+                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 sm:text-sm"
                 placeholder="e.g. 101"
               />
             </div>
@@ -205,7 +270,7 @@
                 type="text"
                 id="class"
                 required
-                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none sm:text-sm"
+                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 sm:text-sm"
                 placeholder="e.g. 10"
               />
             </div>
@@ -219,7 +284,7 @@
                 type="text"
                 id="section"
                 required
-                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none sm:text-sm"
+                class="form-input block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 sm:text-sm"
                 placeholder="e.g. A"
               />
             </div>
@@ -231,9 +296,15 @@
               <button
                 type="submit"
                 id="submit-btn"
-                class="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 rounded-xl shadow-md shadow-brand-500/20 transition-all duration-200"
+                class="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 rounded-xl shadow-md shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
               >
-                Add Student
+                <span id="submit-text">Add Student</span>
+                <span id="submit-spinner" class="hidden">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
               </button>
               <button
                 type="button"
@@ -355,7 +426,7 @@
     <!-- Delete confirmation modal -->
     <div
       id="delete-modal"
-      class="modal-overlay fixed inset-0 z-50 items-center justify-center p-4"
+      class="modal-overlay fixed inset-0 z-50 p-4"
       aria-hidden="true"
     >
       <div
@@ -397,21 +468,340 @@
           </button>
           <button
             id="delete-confirm-btn"
-            class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 rounded-xl shadow-md shadow-red-500/20 transition-all duration-200"
+            class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 rounded-xl shadow-md shadow-red-500/20 transition-all duration-200 flex items-center justify-center gap-2"
           >
-            Delete
+            <span id="delete-confirm-text">Delete</span>
+            <span id="delete-spinner" class="hidden">
+              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
           </button>
         </div>
       </div>
     </div>
 
-    <script src="dashboard.js"></script>
-    <script src="theme.js"></script>
+    <script>
+      // --- Theme Toggle Logic ---
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+      // Check for saved theme preference or use system preference
+      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        themeToggleLightIcon.classList.remove('hidden');
+        document.documentElement.classList.add('dark');
+      } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        document.documentElement.classList.remove('dark');
+      }
+
+      themeToggle.addEventListener('click', () => {
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+
+        if (localStorage.getItem('color-theme')) {
+          if (localStorage.getItem('color-theme') === 'light') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+          }
+        } else {
+          if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+          } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+          }
+        }
+      });
+
+      // --- User Display Logic ---
+      // Simulate user data (replace with actual user data from backend)
+      const userDisplay = document.getElementById('user-display');
+      const userAvatar = document.getElementById('user-avatar');
+      const storedUser = localStorage.getItem('schoolManagerUser');
+
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        userDisplay.textContent = user.username || 'User';
+        userAvatar.textContent = (user.username || 'U').charAt(0).toUpperCase();
+      } else {
+        userDisplay.textContent = 'User';
+        userAvatar.textContent = 'U';
+      }
+
+      // --- Logout Logic ---
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('schoolManagerUser');
+        window.location.href = 'index.html'; // Redirect to login page
+      });
+
+      // --- Toast Notification System ---
+      const toastContainer = document.getElementById('toast-container');
+
+      function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.classList.add('toast', 'p-4', 'rounded-xl', 'shadow-md', 'flex', 'items-center', 'gap-3');
+
+        if (type === 'success') {
+          toast.classList.add('bg-emerald-50', 'dark:bg-emerald-900/30', 'border', 'border-emerald-100', 'dark:border-emerald-800');
+          toast.innerHTML = `
+            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p class="text-sm font-medium text-emerald-700 dark:text-emerald-300">${message}</p>
+          `;
+        } else if (type === 'error') {
+          toast.classList.add('bg-red-50', 'dark:bg-red-900/30', 'border', 'border-red-100', 'dark:border-red-800');
+          toast.innerHTML = `
+            <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm font-medium text-red-700 dark:text-red-300">${message}</p>
+          `;
+        }
+
+        toastContainer.appendChild(toast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // --- Student Form Logic ---
+      const studentForm = document.getElementById('student-form');
+      const formTitle = document.getElementById('form-title');
+      const formBadge = document.getElementById('form-badge');
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const submitSpinner = document.getElementById('submit-spinner');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const studentError = document.getElementById('student-error');
+      const studentsBody = document.getElementById('students-body');
+      const emptyState = document.getElementById('empty-state');
+      const statStudents = document.getElementById('stat-students');
+      const statClasses = document.getElementById('stat-classes');
+      const statSections = document.getElementById('stat-sections');
+
+      let students = JSON.parse(localStorage.getItem('students')) || [];
+      let editingId = null;
+
+      // Render student records
+      function renderStudents(filter = '') {
+        if (students.length === 0) {
+          emptyState.classList.remove('hidden');
+          return;
+        } else {
+          emptyState.classList.add('hidden');
+        }
+
+        studentsBody.innerHTML = '';
+        const filteredStudents = students.filter(student =>
+          student.name.toLowerCase().includes(filter.toLowerCase()) ||
+          student.roll.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        filteredStudents.forEach(student => {
+          const row = document.createElement('tr');
+          row.classList.add('transition-all', 'duration-200', 'hover:bg-gray-50', 'dark:hover:bg-gray-800/60');
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${student.name}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${student.roll}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${student.class}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${student.section}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button
+                onclick="editStudent(${student.id})"
+                class="text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                onclick="confirmDelete(${student.id})"
+                class="ml-3 text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+          `;
+          studentsBody.appendChild(row);
+        });
+
+        // Update stats
+        updateStats();
+      }
+
+      // Update stats
+      function updateStats() {
+        statStudents.textContent = students.length;
+
+        // Count unique classes and sections
+        const classes = new Set(students.map(student => student.class));
+        const sections = new Set(students.map(student => student.section));
+
+        statClasses.textContent = classes.size;
+        statSections.textContent = sections.size;
+      }
+
+      // Add or update student
+      studentForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const roll = document.getElementById('roll').value.trim();
+        const studentClass = document.getElementById('class').value.trim();
+        const section = document.getElementById('section').value.trim();
+
+        // Validate inputs
+        if (!name || !roll || !studentClass || !section) {
+          studentError.textContent = 'All fields are required.';
+          studentError.classList.remove('hidden');
+          return;
+        }
+
+        studentError.classList.add('hidden');
+
+        // Simulate loading state
+        submitBtn.disabled = true;
+        submitText.classList.add('hidden');
+        submitSpinner.classList.remove('hidden');
+
+        // Simulate API call
+        setTimeout(() => {
+          if (editingId !== null) {
+            // Update existing student
+            const index = students.findIndex(student => student.id === editingId);
+            students[index] = { id: editingId, name, roll, class: studentClass, section };
+            showToast('Student updated successfully!');
+          } else {
+            // Add new student
+            const newStudent = {
+              id: Date.now(),
+              name,
+              roll,
+              class: studentClass,
+              section
+            };
+            students.push(newStudent);
+            showToast('Student added successfully!');
+          }
+
+          // Save to localStorage
+          localStorage.setItem('students', JSON.stringify(students));
+
+          // Reset form
+          studentForm.reset();
+          submitBtn.disabled = false;
+          submitText.classList.remove('hidden');
+          submitSpinner.classList.add('hidden');
+          formTitle.textContent = 'Add Student';
+          formBadge.classList.add('hidden');
+          cancelBtn.classList.add('hidden');
+          editingId = null;
+
+          // Re-render students
+          renderStudents(document.getElementById('search').value);
+        }, 1000);
+      });
+
+      // Cancel edit
+      cancelBtn.addEventListener('click', () => {
+        studentForm.reset();
+        formTitle.textContent = 'Add Student';
+        formBadge.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+        editingId = null;
+        studentError.classList.add('hidden');
+      });
+
+      // Edit student
+      function editStudent(id) {
+        const student = students.find(student => student.id === id);
+        if (!student) return;
+
+        document.getElementById('name').value = student.name;
+        document.getElementById('roll').value = student.roll;
+        document.getElementById('class').value = student.class;
+        document.getElementById('section').value = student.section;
+        document.getElementById('student-id').value = student.id;
+
+        formTitle.textContent = 'Edit Student';
+        formBadge.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+        editingId = id;
+
+        // Scroll to form
+        document.getElementById('student-form').scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // --- Delete Modal Logic ---
+      const deleteModal = document.getElementById('delete-modal');
+      const deleteBackdrop = document.getElementById('delete-backdrop');
+      const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+      const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+      const deleteConfirmText = document.getElementById('delete-confirm-text');
+      const deleteSpinner = document.getElementById('delete-spinner');
+
+      let deleteId = null;
+
+      function confirmDelete(id) {
+        deleteId = id;
+        deleteModal.classList.add('active');
+      }
+
+      function closeDeleteModal() {
+        deleteModal.classList.remove('active');
+        deleteId = null;
+      }
+
+      deleteBackdrop.addEventListener('click', closeDeleteModal);
+      deleteCancelBtn.addEventListener('click', closeDeleteModal);
+
+      deleteConfirmBtn.addEventListener('click', () => {
+        if (deleteId === null) return;
+
+        // Simulate loading state
+        deleteConfirmBtn.disabled = true;
+        deleteConfirmText.classList.add('hidden');
+        deleteSpinner.classList.remove('hidden');
+
+        // Simulate API call
+        setTimeout(() => {
+          students = students.filter(student => student.id !== deleteId);
+          localStorage.setItem('students', JSON.stringify(students));
+
+          // Reset modal
+          deleteConfirmBtn.disabled = false;
+          deleteConfirmText.classList.remove('hidden');
+          deleteSpinner.classList.add('hidden');
+          closeDeleteModal();
+
+          // Re-render students
+          renderStudents(document.getElementById('search').value);
+          showToast('Student deleted successfully!');
+        }, 1000);
+      });
+
+      // --- Search Logic ---
+      const searchInput = document.getElementById('search');
+      searchInput.addEventListener('input', () => {
+        renderStudents(searchInput.value);
+      });
+
+      // --- Initialize ---
+      renderStudents();
+    </script>
   </body>
 </html>
-
-
-
-
-
-<!-- my rule  -->
