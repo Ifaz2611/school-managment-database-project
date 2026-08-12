@@ -62,6 +62,57 @@ A complete school management system with user authentication and student records
 3. **Git** (optional, for cloning)
    - Download from: https://git-scm.com/
 
+
+
+```
+
+Quick Start (Easy Instructions)
+Follow these simple steps to run the project on your computer:
+
+1. Start XAMPP
+Open XAMPP Control Panel
+
+Click Start for Apache and MySQL
+
+Make sure both show Running in green
+
+2. Create the Database
+Go to http://localhost/phpmyadmin (localhost in Bing) in your browser
+
+Click Import
+
+Select the file schema.sql from this project
+
+Click Go → This will create the database school_db with tables
+
+3. Install Node.js Packages
+Open Command Prompt / Terminal
+
+Go to the project folder (e.g., cd School-pro)
+
+Run:
+
+bash
+npm install
+4. Start the Server
+Run:
+
+bash
+npm start
+If successful, you’ll see:
+
+Code
+Server is running on http://localhost:3000
+5. Open the Website
+In your browser, go to: http://localhost:3000
+
+Click Sign Up to create an account
+
+Log in with your email and password
+
+Use the dashboard to add, edit, or delete student records
+```
+
 ## Setup Instructions
 
 ### Step 1 – Start XAMPP Services
